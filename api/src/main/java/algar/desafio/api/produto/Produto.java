@@ -5,6 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -40,6 +41,22 @@ public class Produto {
 
     public void excluir() {
         this.ativo = false;
+    }
+
+    public void DadosAtualizacaoProduto(DadosAtualizacaoProduto dados) {
+        if (dados.nome() != null) {
+            this.nome = dados.nome();
+        }
+        if (dados.descricao() != null) {
+            this.descricao = dados.descricao();
+        }
+        if (dados.valor() != 0.0) {
+            this.valor = dados.valor();
+        }
+        if (dados.quantidade() != 0) {
+            this.quantidade = dados.quantidade();
+        }
+
     }
 
 }

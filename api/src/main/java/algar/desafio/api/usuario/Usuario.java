@@ -42,4 +42,19 @@ public class Usuario {
         this.ativo = false;
     }
 
+    public void DadosAtualizacaoUsuario(DadosAtualizacaoUsuario dados) {
+        if (dados.nome() != null) {
+            this.nome = dados.nome();
+        }
+        if (dados.email() != null) {
+            this.email = dados.email();
+        }
+        if (dados.cpf() != null) {
+            this.cpf = dados.cpf();
+        }
+        if (dados.saldo() != 0.0) {
+            this.saldo = dados.saldo();
+        }
+    }
+
 }
