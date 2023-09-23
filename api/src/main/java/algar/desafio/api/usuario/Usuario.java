@@ -1,5 +1,8 @@
 package algar.desafio.api.usuario;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -25,6 +28,7 @@ public class Usuario {
     private String email;
     private String cpf;
     private double saldo;
+    private List<Long> itens = new ArrayList<>();
 
     private Boolean ativo;
 
@@ -55,6 +59,15 @@ public class Usuario {
         if (dados.saldo() != 0.0) {
             this.saldo = dados.saldo();
         }
+        if (dados.itens() != null) {
+            List<Long> itensAtualizados = new ArrayList<>(this.itens); // Cria uma cópia da lista atual
+            itensAtualizados.addAll(dados.itens()); // Adiciona os itens atualizados
+            this.itens = itensAtualizados; // Atualiza a lista de itens
+        }
+    }
+
+    public void setSaldo(double d) {
+        this.saldo = d;
     }
 
 }

@@ -5,7 +5,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-import jakarta.validation.Valid;
+//import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -57,6 +57,10 @@ public class Produto {
             this.quantidade = dados.quantidade();
         }
 
+    }
+
+    public void setQuantidade(int i) {
+        this.quantidade = i;
     }
 
 }
