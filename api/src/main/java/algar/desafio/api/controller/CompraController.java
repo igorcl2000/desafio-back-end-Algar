@@ -33,10 +33,13 @@ public class CompraController {
                 // Subtrai o valor da compra do saldo do usuário
                 usuario.setSaldo(usuario.getSaldo() - produto.getValor());
 
+                // Adiciona o id do produto aos itens do usuario
+                // usuario.setItem(produto.getId());
+
                 // Decrementa a quantidade do produto
                 produto.setQuantidade(produto.getQuantidade() - 1);
 
-                // Você pode atualizar o usuário e o produto no banco de dados aqui
+                // Atualizar o usuário e o produto no banco de dados
                 usuarioRepository.save(usuario);
                 produtoRepository.save(produto);
 

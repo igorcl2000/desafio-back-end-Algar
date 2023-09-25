@@ -66,8 +66,14 @@ public class Usuario {
         }
     }
 
-    public void setSaldo(double d) {
-        this.saldo = d;
+    public void setSaldo(double novoSaldo) {
+        this.saldo = novoSaldo;
+    }
+
+    public void setItem(Long produtoId) {
+        List<Long> itensAtualizados = new ArrayList<>(this.itens); // Cria uma cópia da lista atual
+        itensAtualizados.add(produtoId); // Adiciona os itens atualizados
+        this.itens = itensAtualizados; // Atualiza a lista de itens
     }
 
 }
