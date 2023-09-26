@@ -1,6 +1,6 @@
 package algar.desafio.api.usuario;
 
-import java.util.List;
+//import java.util.List;
 
 public record DadosListagemUsuario(
         Long id,
@@ -8,7 +8,7 @@ public record DadosListagemUsuario(
         String cpf,
         String email,
         double saldo,
-        List<Long> itens) {
+        int itens) {
 
     public DadosListagemUsuario(Usuario usuario) {
         this(

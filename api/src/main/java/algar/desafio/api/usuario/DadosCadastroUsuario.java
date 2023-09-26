@@ -1,5 +1,7 @@
 package algar.desafio.api.usuario;
 
+//import java.util.List;
+
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Pattern;
@@ -12,7 +14,9 @@ public record DadosCadastroUsuario(
 
                 @NotBlank @Email String email,
 
-                double saldo
+                double saldo,
+
+                int itens
 
 ) {
 

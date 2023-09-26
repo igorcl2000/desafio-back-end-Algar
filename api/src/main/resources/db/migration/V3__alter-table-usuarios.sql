@@ -1,1 +1,1 @@
-alter table usuarios add itens text;
+alter table usuarios add itens int;

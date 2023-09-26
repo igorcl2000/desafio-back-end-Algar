@@ -1,6 +1,6 @@
 package algar.desafio.api.usuario;
 
-import java.util.List;
+//import java.util.List;
 
 import jakarta.validation.constraints.NotNull;
 
@@ -11,7 +11,7 @@ public record DadosAtualizacaoUsuario(
                 String cpf,
                 String email,
                 double saldo,
-                List<Long> itens
+                int itens
 
 ) {
 

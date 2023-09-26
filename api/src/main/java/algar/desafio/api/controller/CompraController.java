@@ -34,7 +34,8 @@ public class CompraController {
                 usuario.setSaldo(usuario.getSaldo() - produto.getValor());
 
                 // Adiciona o id do produto aos itens do usuario
-                // usuario.setItem(produto.getId());
+                // int iDProduto = produto.getId();
+                usuario.setItem(usuario.getItens() + 1);
 
                 // Decrementa a quantidade do produto
                 produto.setQuantidade(produto.getQuantidade() - 1);
