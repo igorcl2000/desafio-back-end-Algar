@@ -20,8 +20,6 @@ import algar.desafio.api.produto.DadosCadastroProduto;
 import algar.desafio.api.produto.DadosListagemProduto;
 import algar.desafio.api.produto.Produto;
 import algar.desafio.api.produto.ProdutoRepository;
-import algar.desafio.api.usuario.DadosListagemUsuario;
-//import algar.desafio.api.usuario.DadosListagemUsuario;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
@@ -58,7 +56,7 @@ public class ProdutoController {
         var produto = repository.getReferenceById(id);
         Produto produtoId = repository.findById(id).orElse(null);
 
-        if (produtoId != null) {
+        if (produtoId != null && produtoId.getAtivo() == true) {
             return ResponseEntity.ok(new DadosListagemProduto(produto));
         } else {
             return ResponseEntity.badRequest().body("Produto não encontrado.");
@@ -73,7 +71,7 @@ public class ProdutoController {
         var produto = repository.getReferenceById(dados.id());
         Produto produtoId = repository.findById(dados.id()).orElse(null);
 
-        if (produtoId != null) {
+        if (produtoId != null && produtoId.getAtivo() == true) {
             produto.DadosAtualizacaoProduto(dados);
             return ResponseEntity.ok(new DadosListagemProduto(produto));
         } else {
@@ -89,7 +87,7 @@ public class ProdutoController {
         var produto = repository.getReferenceById(id);
         Produto produtoId = repository.findById(id).orElse(null);
 
-        if (produtoId != null) {
+        if (produtoId != null && produtoId.getAtivo() == true) {
             produto.excluir();
             return ResponseEntity.noContent().build();
         } else {

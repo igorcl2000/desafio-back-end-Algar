@@ -66,7 +66,7 @@ public class UsuarioController {
         var usuario = repository.getReferenceById(id);
         Usuario usuarioId = repository.findById(id).orElse(null);
 
-        if (usuarioId != null) {
+        if (usuarioId != null && usuarioId.getAtivo() == true) {
             return ResponseEntity.ok(new DadosListagemUsuario(usuario));
         } else {
             return ResponseEntity.badRequest().body("Usuario não encontrado.");
@@ -81,7 +81,7 @@ public class UsuarioController {
         var usuario = repository.getReferenceById(dados.id());
         Usuario usuarioId = repository.findById(dados.id()).orElse(null);
 
-        if (usuarioId != null) {
+        if (usuarioId != null && usuarioId.getAtivo() == true) {
             usuario.DadosAtualizacaoUsuario(dados);
             return ResponseEntity.ok(new DadosListagemUsuario(usuario));
         } else {
@@ -97,7 +97,7 @@ public class UsuarioController {
         var usuario = repository.getReferenceById(id);
         Usuario usuarioId = repository.findById(id).orElse(null);
 
-        if (usuarioId != null) {
+        if (usuarioId != null && usuarioId.getAtivo() == true) {
             usuario.excluir();
             return ResponseEntity.noContent().build();
         } else {
