@@ -28,7 +28,7 @@ public class Usuario {
     private String email;
     private String cpf;
     private double saldo;
-    private Long itens;
+    private Long produtoId;
 
     private Boolean ativo;
 
@@ -59,8 +59,8 @@ public class Usuario {
         if (dados.saldo() != 0.0) {
             this.saldo = dados.saldo();
         }
-        if (dados.itens() != null) {
-            this.itens = dados.itens();
+        if (dados.produtoId() != null) {
+            this.produtoId = dados.produtoId();
         }
     }
 
@@ -68,8 +68,8 @@ public class Usuario {
         this.saldo = novoSaldo;
     }
 
-    public void setItem(Long produtoId) {
-        this.itens = produtoId; // Atualiza a lista de itens
+    public void setItem(Long produtoId2) {
+        this.produtoId = produtoId2; // Atualiza a lista de itens
     }
 
 }

@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+//import algar.desafio.api.produto.Produto;
 import algar.desafio.api.usuario.DadosAtualizacaoUsuario;
 import algar.desafio.api.usuario.DadosCadastroUsuario;
 import algar.desafio.api.usuario.DadosListagemUsuario;
@@ -35,15 +36,20 @@ public class UsuarioController {
     @PostMapping
     @Transactional
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroUsuario dados, UriComponentsBuilder uriBuilder) {
-        System.out.println("dados recebidos: " + dados);
 
+        System.out.println("Dados recebidos: " + dados);
         var usuario = new Usuario(dados);
+        Usuario usuarioCpf = repository.findByCpf(dados.cpf()).orElse(null);
+        Usuario usuarioEmail = repository.findByEmail(dados.email()).orElse(null);
 
-        repository.save(usuario);
+        if (usuarioCpf == null && usuarioEmail == null) {
+            repository.save(usuario);
+            var uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
+            return ResponseEntity.created(uri).body(new DadosListagemUsuario(usuario));
+        } else {
+            return ResponseEntity.badRequest().body("CPF ou E-mail de usuário já existente.");
+        }
 
-        var uri = uriBuilder.path("/usuarios/{id}").buildAndExpand(usuario.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new DadosListagemUsuario(usuario));
     }
 
     @GetMapping
@@ -56,27 +62,48 @@ public class UsuarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity listar(@PathVariable Long id) {
+
         var usuario = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosListagemUsuario(usuario));
+        Usuario usuarioId = repository.findById(id).orElse(null);
+
+        if (usuarioId != null) {
+            return ResponseEntity.ok(new DadosListagemUsuario(usuario));
+        } else {
+            return ResponseEntity.badRequest().body("Usuario não encontrado.");
+        }
 
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoUsuario dados) {
-        var usuario = repository.getReferenceById(dados.id());
-        usuario.DadosAtualizacaoUsuario(dados);
 
-        return ResponseEntity.ok(new DadosListagemUsuario(usuario));
+        var usuario = repository.getReferenceById(dados.id());
+        Usuario usuarioId = repository.findById(dados.id()).orElse(null);
+
+        if (usuarioId != null) {
+            usuario.DadosAtualizacaoUsuario(dados);
+            return ResponseEntity.ok(new DadosListagemUsuario(usuario));
+        } else {
+            return ResponseEntity.badRequest().body("Usuario não encontrado.");
+        }
+
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity remover(@PathVariable Long id) {
-        var usuario = repository.getReferenceById(id);
-        usuario.excluir();
 
-        return ResponseEntity.noContent().build();
+        var usuario = repository.getReferenceById(id);
+        Usuario usuarioId = repository.findById(id).orElse(null);
+
+        if (usuarioId != null) {
+            usuario.excluir();
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.badRequest().body("Usuario não encontrado.");
+        }
+
     }
 
 }

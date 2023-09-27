@@ -8,7 +8,7 @@ public record DadosListagemUsuario(
         String cpf,
         String email,
         double saldo,
-        Long itens) {
+        Long produtoId) {
 
     public DadosListagemUsuario(Usuario usuario) {
         this(
@@ -17,7 +17,7 @@ public record DadosListagemUsuario(
                 usuario.getCpf(),
                 usuario.getEmail(),
                 usuario.getSaldo(),
-                usuario.getItens());
+                usuario.getProdutoId());
     }
 
 }

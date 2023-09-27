@@ -35,12 +35,10 @@ public class ProdutoController {
     @PostMapping
     @Transactional
     public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroProduto dados, UriComponentsBuilder uriBuilder) {
-        System.out.println("dados recebidos: " + dados);
 
+        System.out.println("Dados recebidos: " + dados);
         var produto = new Produto(dados);
-
         repository.save(produto);
-
         var uri = uriBuilder.path("produtos/{id}").buildAndExpand(produto.getId()).toUri();
 
         return ResponseEntity.created(uri).body(new DadosListagemProduto(produto));
@@ -56,27 +54,47 @@ public class ProdutoController {
 
     @GetMapping("/{id}")
     public ResponseEntity listar(@PathVariable Long id) {
+
         var produto = repository.getReferenceById(id);
-        return ResponseEntity.ok(new DadosListagemProduto(produto));
+        Produto produtoId = repository.findById(id).orElse(null);
+
+        if (produtoId != null) {
+            return ResponseEntity.ok(new DadosListagemProduto(produto));
+        } else {
+            return ResponseEntity.badRequest().body("Produto não encontrado.");
+        }
 
     }
 
     @PutMapping
     @Transactional
     public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoProduto dados) {
-        var produto = repository.getReferenceById(dados.id());
-        produto.DadosAtualizacaoProduto(dados);
 
-        return ResponseEntity.ok(new DadosListagemProduto(produto));
+        var produto = repository.getReferenceById(dados.id());
+        Produto produtoId = repository.findById(dados.id()).orElse(null);
+
+        if (produtoId != null) {
+            produto.DadosAtualizacaoProduto(dados);
+            return ResponseEntity.ok(new DadosListagemProduto(produto));
+        } else {
+            return ResponseEntity.badRequest().body("Produto não encontrado.");
+        }
+
     }
 
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity remover(@PathVariable Long id) {
-        var produto = repository.getReferenceById(id);
-        produto.excluir();
 
-        return ResponseEntity.noContent().build();
+        var produto = repository.getReferenceById(id);
+        Produto produtoId = repository.findById(id).orElse(null);
+
+        if (produtoId != null) {
+            produto.excluir();
+            return ResponseEntity.noContent().build();
+        } else {
+            return ResponseEntity.badRequest().body("Produto não encontrado.");
+        }
     }
 
 }

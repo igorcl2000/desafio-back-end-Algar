@@ -35,7 +35,6 @@ public class CompraController {
                 usuario.setSaldo(usuario.getSaldo() - produto.getValor());
 
                 // Adiciona o id do produto aos itens do usuario
-                // int iDProduto = produto.getId();
                 usuario.setItem(produto.getId());
 
                 // Decrementa a quantidade do produto
@@ -45,7 +44,8 @@ public class CompraController {
                 usuarioRepository.save(usuario);
                 produtoRepository.save(produto);
 
-                return ResponseEntity.ok("Compra realizada com sucesso.\n" + new DadosListagemUsuario(usuario));
+                return ResponseEntity.accepted()
+                        .body((new DadosListagemUsuario(usuario) + "\n \nCompra realizada com sucesso."));
             } else {
                 return ResponseEntity.badRequest().body("Saldo insuficiente ou produto fora de estoque.");
             }
