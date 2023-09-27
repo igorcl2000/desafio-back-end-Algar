@@ -8,7 +8,7 @@ public record DadosListagemUsuario(
         String cpf,
         String email,
         double saldo,
-        int itens) {
+        Long itens) {
 
     public DadosListagemUsuario(Usuario usuario) {
         this(

@@ -1,1 +1,1 @@
-alter table usuarios add itens int;
+alter table usuarios add itens bigint;

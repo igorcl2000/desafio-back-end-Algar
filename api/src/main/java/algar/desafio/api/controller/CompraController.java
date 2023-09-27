@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 import algar.desafio.api.produto.Produto;
 import algar.desafio.api.produto.ProdutoRepository;
 import algar.desafio.api.servicos.CompraRequest;
+import algar.desafio.api.usuario.DadosListagemUsuario;
 import algar.desafio.api.usuario.Usuario;
 import algar.desafio.api.usuario.UsuarioRepository;
 
@@ -35,7 +36,7 @@ public class CompraController {
 
                 // Adiciona o id do produto aos itens do usuario
                 // int iDProduto = produto.getId();
-                usuario.setItem(usuario.getItens() + 1);
+                usuario.setItem(produto.getId());
 
                 // Decrementa a quantidade do produto
                 produto.setQuantidade(produto.getQuantidade() - 1);
@@ -44,7 +45,7 @@ public class CompraController {
                 usuarioRepository.save(usuario);
                 produtoRepository.save(produto);
 
-                return ResponseEntity.ok("Compra realizada com sucesso.");
+                return ResponseEntity.ok("Compra realizada com sucesso.\n" + new DadosListagemUsuario(usuario));
             } else {
                 return ResponseEntity.badRequest().body("Saldo insuficiente ou produto fora de estoque.");
             }

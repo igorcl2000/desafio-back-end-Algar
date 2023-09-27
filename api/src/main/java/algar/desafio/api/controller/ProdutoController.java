@@ -18,6 +18,7 @@ import algar.desafio.api.produto.DadosCadastroProduto;
 import algar.desafio.api.produto.DadosListagemProduto;
 import algar.desafio.api.produto.Produto;
 import algar.desafio.api.produto.ProdutoRepository;
+import algar.desafio.api.usuario.DadosListagemUsuario;
 //import algar.desafio.api.usuario.DadosListagemUsuario;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
@@ -39,6 +40,13 @@ public class ProdutoController {
     @GetMapping
     public Page<DadosListagemProduto> listar(@PageableDefault(size = 10, sort = { "nome" }) Pageable paginacao) {
         return repository.findAllByAtivoTrue(paginacao).map(DadosListagemProduto::new);
+
+    }
+
+    @GetMapping("/{id}")
+    public DadosListagemProduto listar(@PathVariable Long id) {
+        var produto = repository.getReferenceById(id);
+        return new DadosListagemProduto(produto);
 
     }
 

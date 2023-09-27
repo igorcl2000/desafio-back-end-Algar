@@ -43,6 +43,13 @@ public class UsuarioController {
 
     }
 
+    @GetMapping("/{id}")
+    public DadosListagemUsuario listar(@PathVariable Long id) {
+        var usuario = repository.getReferenceById(id);
+        return new DadosListagemUsuario(usuario);
+
+    }
+
     @PutMapping
     @Transactional
     public void atualizar(@RequestBody @Valid DadosAtualizacaoUsuario dados) {
