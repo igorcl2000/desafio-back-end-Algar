@@ -1,4 +1,6 @@
-package algar.desafio.api.usuario;
+package algar.desafio.api.dto;
+
+import algar.desafio.api.model.Usuario;
 
 //import java.util.List;
 

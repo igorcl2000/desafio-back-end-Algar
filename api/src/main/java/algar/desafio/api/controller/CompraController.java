@@ -7,12 +7,12 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import algar.desafio.api.produto.Produto;
-import algar.desafio.api.produto.ProdutoRepository;
+import algar.desafio.api.dto.DadosListagemUsuario;
+import algar.desafio.api.model.Produto;
+import algar.desafio.api.model.Usuario;
+import algar.desafio.api.repository.ProdutoRepository;
+import algar.desafio.api.repository.UsuarioRepository;
 import algar.desafio.api.servicos.CompraRequest;
-import algar.desafio.api.usuario.DadosListagemUsuario;
-import algar.desafio.api.usuario.Usuario;
-import algar.desafio.api.usuario.UsuarioRepository;
 
 @RestController
 @RequestMapping("/compra")
@@ -31,16 +31,11 @@ public class CompraController {
 
         if (usuario != null && produto != null) {
             if (usuario.getSaldo() >= produto.getValor() && produto.getQuantidade() > 0) {
-                // Subtrai o valor da compra do saldo do usuário
+
                 usuario.setSaldo(usuario.getSaldo() - produto.getValor());
-
-                // Adiciona o id do produto aos itens do usuario
                 usuario.setItem(produto.getId());
-
-                // Decrementa a quantidade do produto
                 produto.setQuantidade(produto.getQuantidade() - 1);
 
-                // Atualizar o usuário e o produto no banco de dados
                 usuarioRepository.save(usuario);
                 produtoRepository.save(produto);
 

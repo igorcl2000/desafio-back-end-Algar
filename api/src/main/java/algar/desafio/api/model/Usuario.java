@@ -1,4 +1,7 @@
-package algar.desafio.api.usuario;
+package algar.desafio.api.model;
+
+import algar.desafio.api.dto.DadosAtualizacaoUsuario;
+import algar.desafio.api.dto.DadosCadastroUsuario;
 
 //import java.util.ArrayList;
 //import java.util.List;

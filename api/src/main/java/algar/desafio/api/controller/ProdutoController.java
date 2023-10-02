@@ -15,11 +15,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-import algar.desafio.api.produto.DadosAtualizacaoProduto;
-import algar.desafio.api.produto.DadosCadastroProduto;
-import algar.desafio.api.produto.DadosListagemProduto;
-import algar.desafio.api.produto.Produto;
-import algar.desafio.api.produto.ProdutoRepository;
+import algar.desafio.api.dto.DadosAtualizacaoProduto;
+import algar.desafio.api.dto.DadosCadastroProduto;
+import algar.desafio.api.dto.DadosListagemProduto;
+import algar.desafio.api.model.Produto;
+import algar.desafio.api.repository.ProdutoRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 

@@ -1,5 +1,7 @@
-package algar.desafio.api.produto;
+package algar.desafio.api.model;
 
+import algar.desafio.api.dto.DadosAtualizacaoProduto;
+import algar.desafio.api.dto.DadosCadastroProduto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;

@@ -1,4 +1,4 @@
-package algar.desafio.api.usuario;
+package algar.desafio.api.dto;
 
 //import java.util.List;
 
@@ -8,15 +8,15 @@ import jakarta.validation.constraints.Pattern;
 
 public record DadosCadastroUsuario(
 
-                @NotBlank String nome,
+        @NotBlank String nome,
 
-                @NotBlank @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}") String cpf,
+        @NotBlank @Pattern(regexp = "\\d{3}\\.\\d{3}\\.\\d{3}-\\d{2}") String cpf,
 
-                @NotBlank @Email String email,
+        @NotBlank @Email String email,
 
-                double saldo,
+        double saldo,
 
-                Long produtoId
+        Long produtoId
 
 ) {
 

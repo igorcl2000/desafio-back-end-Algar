@@ -17,12 +17,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
-//import algar.desafio.api.produto.Produto;
-import algar.desafio.api.usuario.DadosAtualizacaoUsuario;
-import algar.desafio.api.usuario.DadosCadastroUsuario;
-import algar.desafio.api.usuario.DadosListagemUsuario;
-import algar.desafio.api.usuario.Usuario;
-import algar.desafio.api.usuario.UsuarioRepository;
+import algar.desafio.api.dto.DadosAtualizacaoUsuario;
+import algar.desafio.api.dto.DadosCadastroUsuario;
+import algar.desafio.api.dto.DadosListagemUsuario;
+import algar.desafio.api.model.Usuario;
+import algar.desafio.api.repository.UsuarioRepository;
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
@@ -94,11 +93,11 @@ public class UsuarioController {
     @Transactional
     public ResponseEntity remover(@PathVariable Long id) {
 
-        var usuario = repository.getReferenceById(id);
+        // var usuario = repository.getReferenceById(id);
         Usuario usuarioId = repository.findById(id).orElse(null);
 
         if (usuarioId != null && usuarioId.getAtivo() == true) {
-            usuario.excluir();
+            usuarioId.excluir();
             return ResponseEntity.noContent().build();
         } else {
             return ResponseEntity.badRequest().body("Usuario não encontrado.");
