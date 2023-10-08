@@ -4,8 +4,6 @@ import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
-// import algar.desafio.api.dto.DadosAtualizacaoProduto;
-// import algar.desafio.api.dto.DadosCadastroProduto;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -13,11 +11,6 @@ import jakarta.persistence.Id;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotEmpty;
-//import jakarta.validation.Valid;
-// import lombok.AllArgsConstructor;
-// import lombok.EqualsAndHashCode;
-// import lombok.Getter;
-// import lombok.NoArgsConstructor;
 
 @Table(name = "produtos")
 @Entity(name = "Produtos")

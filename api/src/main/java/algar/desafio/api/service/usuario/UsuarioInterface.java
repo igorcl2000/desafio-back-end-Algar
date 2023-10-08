@@ -6,7 +6,6 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 
 import algar.desafio.api.dto.UsuarioDTO;
-// import algar.desafio.api.model.Produto;
 import algar.desafio.api.model.Usuario;
 
 public interface UsuarioInterface {

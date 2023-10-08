@@ -20,10 +20,4 @@ public interface UsuarioRepository extends JpaRepository<Usuario, Long> {
 
     List<Usuario> findAllByAtivoTrue();
 
-    // Usuario findAllByAtivoTrue(boolean ativo);
-
-    // Optional<Usuario> findByCpf(String cpf);
-
-    // Optional<Usuario> findByEmail(String email);
-
 }

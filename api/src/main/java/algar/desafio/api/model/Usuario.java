@@ -1,9 +1,5 @@
 package algar.desafio.api.model;
 
-// import algar.desafio.api.dto.DadosAtualizacaoUsuario;
-// import algar.desafio.api.dto.DadosCadastroUsuario;
-
-//import java.util.ArrayList;
 import java.util.List;
 
 import org.hibernate.validator.constraints.br.CPF;
@@ -18,10 +14,6 @@ import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
 import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
-// import lombok.AllArgsConstructor;
-// import lombok.EqualsAndHashCode;
-// import lombok.Getter;
-// import lombok.NoArgsConstructor;
 import jakarta.validation.constraints.NotEmpty;
 
 @Table(name = "usuarios")

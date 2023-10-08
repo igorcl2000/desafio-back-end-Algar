@@ -12,8 +12,6 @@ import algar.desafio.api.model.Produto;
 public interface ProdutoRepository extends JpaRepository<Produto, Long> {
 
     Produto findByNome(@Param("nome") String nome);
-    // Page<Produto> findAllByAtivoTrue(Pageable paginacao);
-
     List<Produto> findAllByAtivoTrue();
 
 }

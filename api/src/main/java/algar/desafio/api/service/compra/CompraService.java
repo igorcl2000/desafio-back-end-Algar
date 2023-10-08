@@ -2,6 +2,7 @@ package algar.desafio.api.service.compra;
 
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,28 +13,25 @@ import algar.desafio.api.model.Produto;
 import algar.desafio.api.model.Usuario;
 import algar.desafio.api.repository.ProdutoRepository;
 import algar.desafio.api.repository.UsuarioRepository;
-import algar.desafio.api.service.produto.ProdutoInterface;
 
 @Service
 public class CompraService implements CompraInterface {
-    private final UsuarioRepository usuarioRepository;
-    private final ProdutoRepository produtoRepository;
 
-    public CompraService(UsuarioRepository usuarioRepository, ProdutoRepository produtoRepository, ProdutoInterface produtoInterface){
-        this.usuarioRepository = usuarioRepository;
-        this.produtoRepository = produtoRepository;
-    }
+
+    @Autowired
+    private UsuarioRepository usuarioRepository;
+
+    @Autowired
+    private ProdutoRepository produtoRepository;
 
     @Override
     @Transactional
-    public UsuarioDTO compraProduto(CompraDTO compraDTO2) throws Exception {
+    public UsuarioDTO compraProduto(CompraDTO compraDTO) throws Exception {
         
+        Produto produto = produtoRepository.findById(compraDTO.produtoId()).orElse(null);
+        Usuario usuario = usuarioRepository.findById(compraDTO.usuarioId()).orElse(null);
 
-        Produto produto = produtoRepository.findById(compraDTO2.produtoId()).orElse(null);
-
-        Usuario usuario = usuarioRepository.findById(compraDTO2.usuarioId()).orElse(null);
-
-        if(usuario == null){
+        if(usuario.getAtivo() == false || usuario == null ){
             throw new ResourceNotFoundException("Usuário não cadastrado!");
         }
 
@@ -69,8 +67,4 @@ public class CompraService implements CompraInterface {
 
         return usuarioDTO;
     }
-
-
-
-
 }

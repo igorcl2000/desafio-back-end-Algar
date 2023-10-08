@@ -1,5 +1,6 @@
 package algar.desafio.api.service.produto;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
@@ -13,11 +14,9 @@ import java.util.List;
 
 @Service
 public class ProdutoService implements ProdutoInterface{
-    private final ProdutoRepository produtoRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository){
-        this.produtoRepository = produtoRepository;
-    }
+    @Autowired
+    private ProdutoRepository produtoRepository;
     
     @Override
     @Transactional
@@ -57,9 +56,8 @@ public class ProdutoService implements ProdutoInterface{
     public ProdutoDTO alteraProduto(Produto produto) throws ResourceNotFoundException {
         Produto produtoId = produtoRepository.findById(produto.getId()).orElse(null);
 
-        
-        if(produto != null){
-
+        if(produtoId.getAtivo() == true){
+            
             if (produto.getNome() != null) {
                 produtoId.setNome(produto.getNome());
             }
@@ -75,9 +73,9 @@ public class ProdutoService implements ProdutoInterface{
 
             produtoRepository.save(produtoId);
 
-            return new ProdutoDTO(produtoId.getNome(), produtoId.getDescricao(), produtoId.getValor(), produtoId.getQuantidade());
+            return new ProdutoDTO(produtoId.getNome(), produtoId.getDescricao(), produtoId.getValor(), produtoId.getQuantidade(), produtoId.getUsuarios());
         } else {
-            throw new DataIntegrityViolationException("Produto não cadastrado!");
+            throw new DataIntegrityViolationException("Produto não ativo!");
         }
     }
 

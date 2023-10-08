@@ -3,7 +3,6 @@ package algar.desafio.api.dto;
 import java.util.List;
 
 import algar.desafio.api.model.Produto;
-// import algar.desafio.api.model.Usuario;
 
 public class UsuarioDTO {
 
