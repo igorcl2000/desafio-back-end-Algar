@@ -1,5 +1,5 @@
 package algar.desafio.api.dto;
 
-public class CompraDTO {
+public record CompraDTO(Long usuarioId, Long produtoId) {
     
 }

@@ -17,25 +17,25 @@ public class ProdutoDTO {
 
 
     public String getNome() {
-        return nome;
+        return this.nome;
     }
     public void setNome(String nome) {
         this.nome = nome;
     }
     public String getDescricao() {
-        return descricao;
+        return this.descricao;
     }
     public void setDescricao(String descricao) {
         this.descricao = descricao;
     }
     public double getValor() {
-        return valor;
+        return this.valor;
     }
     public void setValor(double valor) {
         this.valor = valor;
     }
     public int getQuantiade() {
-        return quantiade;
+        return this.quantiade;
     }
     public void setQuantiade(int quantiade) {
         this.quantiade = quantiade;

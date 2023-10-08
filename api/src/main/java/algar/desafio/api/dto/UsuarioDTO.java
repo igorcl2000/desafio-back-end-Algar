@@ -37,7 +37,7 @@ public class UsuarioDTO {
     }
 
     public Long getId() {
-        return id;
+        return this.id;
     }
 
 
@@ -46,7 +46,7 @@ public class UsuarioDTO {
     }
 
     public String getNome() {
-        return nome;
+        return this.nome;
     }
 
 
@@ -56,7 +56,7 @@ public class UsuarioDTO {
 
 
     public String getEmail() {
-        return email;
+        return this.email;
     }
 
 
@@ -66,7 +66,7 @@ public class UsuarioDTO {
 
 
     public String getCpf() {
-        return cpf;
+        return this.cpf;
     }
 
 
@@ -76,7 +76,7 @@ public class UsuarioDTO {
 
 
     public double getSaldo() {
-        return saldo;
+        return this.saldo;
     }
 
 
@@ -86,7 +86,7 @@ public class UsuarioDTO {
 
 
     public List<Produto> getProdutos() {
-        return produtos;
+        return this.produtos;
     }
 
 

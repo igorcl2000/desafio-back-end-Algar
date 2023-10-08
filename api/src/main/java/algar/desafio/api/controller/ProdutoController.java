@@ -1,4 +1,4 @@
-package algar.desafio.api.controller.controller2;
+package algar.desafio.api.controller;
 
 import java.util.List;
 
@@ -20,10 +20,10 @@ import jakarta.validation.Valid;
 
 @Controller
 @RequestMapping("/produto")
-public class ProdutoController2 {
+public class ProdutoController {
     private final ProdutoInterface produtoInterface;
 
-    public ProdutoController2(ProdutoInterface produtoInterface){
+    public ProdutoController(ProdutoInterface produtoInterface){
         this.produtoInterface = produtoInterface;
     }
 
@@ -34,7 +34,7 @@ public class ProdutoController2 {
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoCriado);
     }
 
-    @GetMapping(value = "/ProdutoLista")
+    @GetMapping(value = "/produtoLista")
     public ResponseEntity<List<Produto>> ProdutoLista(){
         List<Produto> ProdutoLista = produtoInterface.produtoLista();
 
@@ -42,7 +42,7 @@ public class ProdutoController2 {
     }
 
     @GetMapping(value = "/getProduto")
-    public ResponseEntity<Produto> getBook(@RequestParam("id") Long id){
+    public ResponseEntity<Produto> getProduto(@RequestParam("id") Long id){
         Produto produto = produtoInterface.getProduto(id);
 
         return ResponseEntity.ok().body(produto);
