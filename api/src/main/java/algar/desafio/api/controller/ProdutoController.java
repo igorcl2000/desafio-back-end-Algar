@@ -1,98 +1,67 @@
 package algar.desafio.api.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.web.PageableDefault;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.web.bind.annotation.RequestParam;
 
-import algar.desafio.api.dto.DadosAtualizacaoProduto;
-import algar.desafio.api.dto.DadosCadastroProduto;
-import algar.desafio.api.dto.DadosListagemProduto;
+import algar.desafio.api.dto.ProdutoDTO;
 import algar.desafio.api.model.Produto;
-import algar.desafio.api.repository.ProdutoRepository;
-import jakarta.transaction.Transactional;
+import algar.desafio.api.service.produto.ProdutoInterface;
 import jakarta.validation.Valid;
 
-@RestController
-@RequestMapping("produtos")
+@Controller
+@RequestMapping("/produto")
 public class ProdutoController {
 
     @Autowired
-    private ProdutoRepository repository;
+    private ProdutoInterface produtoInterface;
 
-    @PostMapping
-    @Transactional
-    public ResponseEntity cadastrar(@RequestBody @Valid DadosCadastroProduto dados, UriComponentsBuilder uriBuilder) {
-
-        System.out.println("Dados recebidos: " + dados);
-        var produto = new Produto(dados);
-        repository.save(produto);
-        var uri = uriBuilder.path("produtos/{id}").buildAndExpand(produto.getId()).toUri();
-
-        return ResponseEntity.created(uri).body(new DadosListagemProduto(produto));
+    @PostMapping(value = "/criar")
+    @CacheEvict(value = "produto", allEntries = true)
+    public ResponseEntity<?> criarProduto(@RequestBody @Valid Produto produto){
+        Produto produtoCriado = produtoInterface.criarProduto(produto);
+        return ResponseEntity.status(HttpStatus.CREATED).body(produtoCriado);
     }
 
-    @GetMapping
-    public ResponseEntity<Page<DadosListagemProduto>> listar(
-            @PageableDefault(size = 10, sort = { "nome" }) Pageable paginacao) {
-        var page = repository.findAllByAtivoTrue(paginacao).map(DadosListagemProduto::new);
-
-        return ResponseEntity.ok(page);
+    @GetMapping(value = "/lista")
+    @Cacheable(value = "produto")
+    public ResponseEntity<List<Produto>> ProdutoLista(){
+        // List<Produto> ProdutoLista = produtoInterface.produtoLista();
+        return ResponseEntity.ok().body(produtoInterface.produtoLista());
     }
 
-    @GetMapping("/{id}")
-    public ResponseEntity listar(@PathVariable Long id) {
-
-        var produto = repository.getReferenceById(id);
-        Produto produtoId = repository.findById(id).orElse(null);
-
-        if (produtoId != null && produtoId.getAtivo() == true) {
-            return ResponseEntity.ok(new DadosListagemProduto(produto));
-        } else {
-            return ResponseEntity.badRequest().body("Produto não encontrado.");
-        }
-
+    @GetMapping(value = "/")
+    @Cacheable(value = "produtoID", condition = "#id > 1")
+    public ResponseEntity<Produto> getProduto(@RequestParam("id") Long id){
+        // Produto produto = produtoInterface.getProduto(id);
+        return ResponseEntity.ok().body(produtoInterface.getProduto(id));
     }
 
-    @PutMapping
-    @Transactional
-    public ResponseEntity atualizar(@RequestBody @Valid DadosAtualizacaoProduto dados) {
-
-        var produto = repository.getReferenceById(dados.id());
-        Produto produtoId = repository.findById(dados.id()).orElse(null);
-
-        if (produtoId != null && produtoId.getAtivo() == true) {
-            produto.DadosAtualizacaoProduto(dados);
-            return ResponseEntity.ok(new DadosListagemProduto(produto));
-        } else {
-            return ResponseEntity.badRequest().body("Produto não encontrado.");
-        }
-
+    @PutMapping(value = "/alterar")
+    @CachePut(value = "produto")
+    public ResponseEntity<ProdutoDTO> alterarProduto(@RequestBody @Valid Produto produto){
+        ProdutoDTO produtoDTO = produtoInterface.alteraProduto(produto);
+        return ResponseEntity.ok().body(produtoDTO);
     }
 
-    @DeleteMapping("/{id}")
-    @Transactional
-    public ResponseEntity remover(@PathVariable Long id) {
-
-        var produto = repository.getReferenceById(id);
-        Produto produtoId = repository.findById(id).orElse(null);
-
-        if (produtoId != null && produtoId.getAtivo() == true) {
-            produto.excluir();
-            return ResponseEntity.noContent().build();
-        } else {
-            return ResponseEntity.badRequest().body("Produto não encontrado.");
-        }
+    @DeleteMapping(value = "/desativar")
+    @CachePut(value = "produto")
+    public ResponseEntity<Produto> desativarUsuario(@RequestParam("id") Long id){
+        produtoInterface.desativarProduto(id);
+        return ResponseEntity.ok().body(null);
     }
-
 }

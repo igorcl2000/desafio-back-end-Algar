@@ -1,51 +1,32 @@
 package algar.desafio.api.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
+// import java.util.List;
+
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
 
-import algar.desafio.api.dto.DadosListagemUsuario;
-import algar.desafio.api.model.Produto;
-import algar.desafio.api.model.Usuario;
-import algar.desafio.api.repository.ProdutoRepository;
-import algar.desafio.api.repository.UsuarioRepository;
-import algar.desafio.api.servicos.CompraRequest;
+import algar.desafio.api.dto.CompraDTO;
+import algar.desafio.api.dto.UsuarioDTO;
+import algar.desafio.api.service.compra.CompraInterface;
 
-@RestController
+@Controller
 @RequestMapping("/compra")
 public class CompraController {
 
     @Autowired
-    private UsuarioRepository usuarioRepository;
+    private CompraInterface compraInterface;
 
-    @Autowired
-    private ProdutoRepository produtoRepository;
+    @PostMapping()
+    public ResponseEntity<?> realizarCompra(@RequestBody CompraDTO compraDTO) throws Exception{
 
-    @PostMapping
-    public ResponseEntity<String> realizarCompra(@RequestBody CompraRequest compraRequest) {
-        Usuario usuario = usuarioRepository.findById(compraRequest.getUsuarioId()).orElse(null);
-        Produto produto = produtoRepository.findById(compraRequest.getProdutoId()).orElse(null);
+        UsuarioDTO compra = compraInterface.compraProduto(compraDTO);
 
-        if (usuario != null && produto != null) {
-            if (usuario.getSaldo() >= produto.getValor() && produto.getQuantidade() > 0) {
+        return ResponseEntity.ok().body(compra);
 
-                usuario.setSaldo(usuario.getSaldo() - produto.getValor());
-                usuario.setItem(produto.getId());
-                produto.setQuantidade(produto.getQuantidade() - 1);
-
-                usuarioRepository.save(usuario);
-                produtoRepository.save(produto);
-
-                return ResponseEntity.accepted()
-                        .body((new DadosListagemUsuario(usuario) + "\n \nCompra realizada com sucesso."));
-            } else {
-                return ResponseEntity.badRequest().body("Saldo insuficiente ou produto fora de estoque.");
-            }
-        } else {
-            return ResponseEntity.badRequest().body("Usuário ou produto não encontrado.");
-        }
     }
 }
