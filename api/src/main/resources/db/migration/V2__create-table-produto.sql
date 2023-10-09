@@ -5,7 +5,8 @@ create table produtos(
     descricao varchar(150) not null,
     valor decimal(10, 2) default 0.00,
     quantidade int,
-    ativo tinyint,
+    ativo boolean,
+    usuarios bigint default null,
 
     primary key(id)
 

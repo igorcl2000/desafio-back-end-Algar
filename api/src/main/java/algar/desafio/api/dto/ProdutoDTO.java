@@ -12,10 +12,6 @@ public class ProdutoDTO {
     private int quantiade;
     private List<Usuario> usuarios;
 
-    
-    
-
-
     public ProdutoDTO(String nome, String descricao, double valor, int quantiade, List<Usuario> usuarios) {
         this.nome = nome;
         this.descricao = descricao;
@@ -23,7 +19,6 @@ public class ProdutoDTO {
         this.quantiade = quantiade;
         this.usuarios = usuarios;
     }
-
 
     public String getNome() {
         return this.nome;
@@ -56,6 +51,14 @@ public class ProdutoDTO {
         this.usuarios = usuarios;
     }
 
-    
-
+    @Override
+    public String toString() {
+        return "{" +
+            " nome='" + getNome() + "'" +
+            ", descricao='" + getDescricao() + "'" +
+            ", valor='" + getValor() + "'" +
+            ", quantidade='" + getQuantiade() + "'" +
+            ", usuarios='" + getUsuarios() + "'" +
+            "}";
+    }
 }

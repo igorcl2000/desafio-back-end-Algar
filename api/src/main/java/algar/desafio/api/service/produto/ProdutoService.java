@@ -35,15 +35,22 @@ public class ProdutoService implements ProdutoInterface{
 
     @Override
     public List<Produto> produtoLista() {
+
+        System.out.println("Buscando produto...");
+        simulateLatency();
         return produtoRepository.findAllByAtivoTrue();
     }
 
     @Override
     public Produto getProduto(Long id) throws ResourceNotFoundException {
-        
+
+        System.out.println("Buscando produto...");
+        simulateLatency();
+
         Produto produto = produtoRepository.findById(id).orElse(null);
 
         if(produto != null ){
+            System.out.println("Produto entregue. ");
             return produto;
         }
         else{
@@ -93,5 +100,14 @@ public class ProdutoService implements ProdutoInterface{
             throw new DataIntegrityViolationException("Produto não cadastrado!");
         }
     }
+
+    private void simulateLatency() {
+		try {
+			long time = 3000L;
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			throw new IllegalStateException(e);
+		}
+	}
 }
 

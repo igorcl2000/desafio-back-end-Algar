@@ -21,10 +21,10 @@ public class CompraController {
     @Autowired
     private CompraInterface compraInterface;
 
-    @PostMapping(value = "/realizar")
-    public ResponseEntity<?> realizarCompra(@RequestBody CompraDTO compraDTO2) throws Exception{
+    @PostMapping()
+    public ResponseEntity<?> realizarCompra(@RequestBody CompraDTO compraDTO) throws Exception{
 
-        UsuarioDTO compra = compraInterface.compraProduto(compraDTO2);
+        UsuarioDTO compra = compraInterface.compraProduto(compraDTO);
 
         return ResponseEntity.ok().body(compra);
 

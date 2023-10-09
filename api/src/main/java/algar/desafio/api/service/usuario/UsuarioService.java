@@ -22,12 +22,12 @@ public class UsuarioService implements UsuarioInterface{
     @Override
     @Transactional
     public Usuario criarUsuario(Usuario usuario){
-        Usuario usuarioB = usuarioRepository.findByCpf(usuario.getCpf());
+        Usuario usuarioExiste = usuarioRepository.findByCpf(usuario.getCpf());
 
-        if(usuarioB == null){
+        if(usuarioExiste == null){
             usuario.setAtivo(true);
-            usuarioB = usuarioRepository.save(usuario);
-            return usuarioB;
+            usuarioExiste = usuarioRepository.save(usuario);
+            return usuarioExiste;
         }
         else{
             throw new DataIntegrityViolationException("Usuário já existente!");
@@ -36,15 +36,22 @@ public class UsuarioService implements UsuarioInterface{
 
     @Override
     public List<Usuario> usuarioLista() {
+
+        System.out.println("Buscando produto...");
+        simulateLatency();
         return usuarioRepository.findAllByAtivoTrue();
     }
 
     @Override
     public Usuario getUsuario(Long id ) throws ResourceNotFoundException {
+
+        System.out.println("Buscando produto...");
+        simulateLatency();
         
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
 
         if(usuario != null){
+            System.out.println("Produto entregue. ");
             return usuario;
         } else {
             throw new ResourceNotFoundException("Usuário não cadastrado!");
@@ -110,4 +117,13 @@ public class UsuarioService implements UsuarioInterface{
         }
     }
     
+    private void simulateLatency() {
+		try {
+			long time = 3000L;
+			Thread.sleep(time);
+		} catch (InterruptedException e) {
+			throw new IllegalStateException(e);
+		}
+	}
+
 }

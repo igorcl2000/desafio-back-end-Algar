@@ -3,6 +3,9 @@ package algar.desafio.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,45 +29,46 @@ public class UsuarioController {
     @Autowired
     private UsuarioInterface usuarioInterface;
 
-    @PostMapping(value = "/criarUsuario")
-    public ResponseEntity<Object> createClient(@RequestBody @Valid Usuario usuario){
+    @PostMapping(value = "/criar")
+    @CacheEvict(value = "usuario", allEntries = true)
+    public ResponseEntity<Object> criarClient(@RequestBody @Valid Usuario usuario){
         Usuario usuarioCriado = usuarioInterface.criarUsuario(usuario);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCriado);
     }
 
     @PutMapping(value = "/adicionaSaldo")
+    @CachePut(value = "usuario")
     public ResponseEntity<UsuarioDTO> adicionaSaldo(@RequestParam("id") Long id, @RequestParam("saldo") double saldo){
         UsuarioDTO usuarioDTO = usuarioInterface.adicionaSaldo(id, saldo);
-
         return ResponseEntity.ok().body(usuarioDTO);
     }
 
-    @GetMapping(value = "/usuarioLista")
+    @GetMapping(value = "/lista")
+    @Cacheable(value = "usuario")
     public ResponseEntity<List<Usuario>> UsuarioLista(){
-        List<Usuario> UsuarioLista = usuarioInterface.usuarioLista();
-
-        return ResponseEntity.ok().body(UsuarioLista);
+        // List<Usuario> UsuarioLista = usuarioInterface.usuarioLista();
+        return ResponseEntity.ok().body(usuarioInterface.usuarioLista());
     }
 
-    @GetMapping(value = "/getUsuario")
+    @GetMapping(value = "/")
+    @Cacheable(value = "usuarioID", condition = "#id > 1")
     public ResponseEntity<Usuario> getUsuario(@RequestParam("id") Long id){
-        Usuario usuario = usuarioInterface.getUsuario(id);
-
-        return ResponseEntity.ok().body(usuario);
+        //Usuario usuario = usuarioInterface.getUsuario(id);
+        return ResponseEntity.ok().body(usuarioInterface.getUsuario(id));
     }
 
-    @PutMapping(value = "/alterarUsuario")
+    @PutMapping(value = "/alterar")
+    @CachePut(value = "usuario")
     public ResponseEntity<UsuarioDTO> alterarProduto(@RequestBody @Valid Usuario usuario){
         UsuarioDTO usuarioDTO = usuarioInterface.alterarUsuario(usuario);
 
         return ResponseEntity.ok().body(usuarioDTO);
     }
 
-    @DeleteMapping(value = "/desativarUsuario")
+    @DeleteMapping(value = "/desativar")
+    @CachePut(value = "usuario")
     public ResponseEntity<Usuario> desativarUsuario(@RequestParam("id") Long id){
         usuarioInterface.desativarUsuario(id);
-
         return ResponseEntity.ok().body(null);
     }
 

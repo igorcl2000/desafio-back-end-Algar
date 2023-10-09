@@ -26,13 +26,12 @@ public class Usuario {
     @NotEmpty(message = "Nome não pode ser vazio!")
     private String nome;
     @NotEmpty(message = "E-mail não pode ser vazio!")
-    // @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@" + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$", message = "Email em formato inválido!")
+    @Email(regexp = "^(?=.{1,64}@)[A-Za-z0-9_-]+(\\.[A-Za-z0-9_-]+)*@" + "[^-][A-Za-z0-9-]+(\\.[A-Za-z0-9-]+)*(\\.[A-Za-z]{2,})$", message = "Email em formato inválido!")
     private String email;
     @NotEmpty(message = "CPF não pode ser vazio!")
-    // @CPF(message = "CPF em formato inválido!")
+    @CPF(message = "CPF em formato inválido!")
     private String cpf;
     private double saldo;
-    // private Long produtoId;
 
     private Boolean ativo;
 

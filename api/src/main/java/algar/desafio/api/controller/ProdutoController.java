@@ -3,6 +3,10 @@ package algar.desafio.api.controller;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
+import org.springframework.cache.annotation.EnableCaching;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -26,38 +30,38 @@ public class ProdutoController {
     @Autowired
     private ProdutoInterface produtoInterface;
 
-    @PostMapping(value = "/criarProduto")
-    public ResponseEntity<?> createBook(@RequestBody @Valid Produto produto){
+    @PostMapping(value = "/criar")
+    @CacheEvict(value = "produto", allEntries = true)
+    public ResponseEntity<?> criarProduto(@RequestBody @Valid Produto produto){
         Produto produtoCriado = produtoInterface.criarProduto(produto);
-
         return ResponseEntity.status(HttpStatus.CREATED).body(produtoCriado);
     }
 
-    @GetMapping(value = "/produtoLista")
+    @GetMapping(value = "/lista")
+    @Cacheable(value = "produto")
     public ResponseEntity<List<Produto>> ProdutoLista(){
-        List<Produto> ProdutoLista = produtoInterface.produtoLista();
-
-        return ResponseEntity.ok().body(ProdutoLista);
+        // List<Produto> ProdutoLista = produtoInterface.produtoLista();
+        return ResponseEntity.ok().body(produtoInterface.produtoLista());
     }
 
-    @GetMapping(value = "/getProduto")
+    @GetMapping(value = "/")
+    @Cacheable(value = "produtoID", condition = "#id > 1")
     public ResponseEntity<Produto> getProduto(@RequestParam("id") Long id){
-        Produto produto = produtoInterface.getProduto(id);
-
-        return ResponseEntity.ok().body(produto);
+        // Produto produto = produtoInterface.getProduto(id);
+        return ResponseEntity.ok().body(produtoInterface.getProduto(id));
     }
 
-    @PutMapping(value = "/alterarProduto")
+    @PutMapping(value = "/alterar")
+    @CachePut(value = "produto")
     public ResponseEntity<ProdutoDTO> alterarProduto(@RequestBody @Valid Produto produto){
-        ProdutoDTO produto1 = produtoInterface.alteraProduto(produto);
-
-        return ResponseEntity.ok().body(produto1);
+        ProdutoDTO produtoDTO = produtoInterface.alteraProduto(produto);
+        return ResponseEntity.ok().body(produtoDTO);
     }
 
-    @DeleteMapping(value = "/desativarProduto")
+    @DeleteMapping(value = "/desativar")
+    @CachePut(value = "produto")
     public ResponseEntity<Produto> desativarUsuario(@RequestParam("id") Long id){
         produtoInterface.desativarProduto(id);
-
         return ResponseEntity.ok().body(null);
     }
 }
