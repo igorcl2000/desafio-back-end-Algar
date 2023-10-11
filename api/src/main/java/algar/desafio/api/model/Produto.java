@@ -26,6 +26,7 @@ public class Produto {
     private double valor;
     private int quantidade;
     private Boolean ativo;
+    
     @JsonIgnore
     @ManyToMany(mappedBy = "produtos")
     private List<Usuario> usuarios;
@@ -34,7 +35,8 @@ public class Produto {
     public Produto() {
     }
 
-    public Produto(String nome, String descricao, double valor, int quantidade, List<Usuario> usuarios) {
+    public Produto(Long id, String nome, String descricao, double valor, int quantidade, List<Usuario> usuarios) {
+        this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.valor = valor;

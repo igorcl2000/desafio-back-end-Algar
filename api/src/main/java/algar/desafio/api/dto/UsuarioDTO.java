@@ -15,7 +15,7 @@ public class UsuarioDTO {
 
     public UsuarioDTO() {
     }
-    // DTO geral
+
     public UsuarioDTO(Long id, String nome, String email, String cpf, double saldo, List<Produto> produtos) {
         this.id = id;
         this.nome = nome;
@@ -24,7 +24,7 @@ public class UsuarioDTO {
         this.saldo = saldo;
         this.produtos = produtos;
     }
-    // DTO para incrementar saldo
+
     public UsuarioDTO(String nome, String cpf, double saldo) {
         this.nome = nome;
         this.cpf = cpf;

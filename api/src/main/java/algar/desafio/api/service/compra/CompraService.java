@@ -5,7 +5,6 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import algar.desafio.api.dto.CompraDTO;
 import algar.desafio.api.dto.UsuarioDTO;
@@ -15,7 +14,7 @@ import algar.desafio.api.repository.ProdutoRepository;
 import algar.desafio.api.repository.UsuarioRepository;
 
 @Service
-public class CompraService implements CompraInterface {
+public class CompraService {
 
 
     @Autowired
@@ -24,8 +23,6 @@ public class CompraService implements CompraInterface {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    @Override
-    @Transactional
     public UsuarioDTO compraProduto(CompraDTO compraDTO) throws Exception {
         
         Produto produto = produtoRepository.findById(compraDTO.produtoId()).orElse(null);
@@ -44,7 +41,7 @@ public class CompraService implements CompraInterface {
         }
 
         if (produto.getValor() > (usuario.getSaldo())) {
-            throw new ResourceNotFoundException("Usuario não tem saldo suficiente!");
+            throw new Exception("Usuario não tem saldo suficiente!");
         }
 
         List<Produto> usuarioProduto = usuario.getProdutos();
@@ -57,14 +54,12 @@ public class CompraService implements CompraInterface {
         usuarioRepository.save(usuario);
         produtoRepository.save(produto);
 
-        UsuarioDTO usuarioDTO = new UsuarioDTO(
+        return new UsuarioDTO(
             usuario.getId(), 
             usuario.getNome(),
             usuario.getEmail(),
             usuario.getCpf(),
             usuario.getSaldo(),
             usuario.getProdutos());
-
-        return usuarioDTO;
     }
 }

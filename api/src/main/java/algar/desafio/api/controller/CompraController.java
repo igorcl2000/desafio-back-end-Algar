@@ -12,16 +12,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import algar.desafio.api.dto.CompraDTO;
 import algar.desafio.api.dto.UsuarioDTO;
-import algar.desafio.api.service.compra.CompraInterface;
+import algar.desafio.api.service.compra.CompraService;
+import jakarta.transaction.Transactional;
 
 @Controller
 @RequestMapping("/compra")
 public class CompraController {
 
     @Autowired
-    private CompraInterface compraInterface;
+    private CompraService compraInterface;
 
     @PostMapping()
+    @Transactional
     public ResponseEntity<?> realizarCompra(@RequestBody CompraDTO compraDTO) throws Exception{
 
         UsuarioDTO compra = compraInterface.compraProduto(compraDTO);
