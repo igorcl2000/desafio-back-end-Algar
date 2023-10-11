@@ -2,24 +2,21 @@ package algar.desafio.api.service.produto;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-import algar.desafio.api.dto.ProdutoDTO;
 import algar.desafio.api.model.Produto;
 import algar.desafio.api.repository.ProdutoRepository;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @Service
-public class ProdutoService implements ProdutoInterface{
+public class ProdutoService {
 
     @Autowired
     private ProdutoRepository produtoRepository;
-    
-    @Override
-    @Transactional
+
     public Produto criarProduto(Produto produto) {
         Produto produtoNome = produtoRepository.findByNome(produto.getNome());
         
@@ -32,8 +29,6 @@ public class ProdutoService implements ProdutoInterface{
             throw new DataIntegrityViolationException("Produto já cadastrado!");
         }
     }
-
-    @Override
     public List<Produto> produtoLista() {
 
         System.out.println("Buscando produto...");
@@ -41,27 +36,27 @@ public class ProdutoService implements ProdutoInterface{
         return produtoRepository.findAllByAtivoTrue();
     }
 
-    @Override
-    public Produto getProduto(Long id) throws ResourceNotFoundException {
+    public Produto getProduto(Long id) throws AccessDeniedException {
 
         System.out.println("Buscando produto...");
-        simulateLatency();
+		// simulateLatency();
 
-        Produto produto = produtoRepository.findById(id).orElse(null);
+		Produto produto = produtoRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Produto não encontrado"));
 
-        if(produto != null ){
-            System.out.println("Produto entregue. ");
-            return produto;
-        }
-        else{
-            throw new DataIntegrityViolationException("Produto não cadastrado!");
-        }
+		if (produto.getAtivo() == false) {
+			throw new AccessDeniedException("produto inativo!");
+		}
+
+		return produto;
     }
+    
+    public Produto alteraProduto(Produto produto)  throws AccessDeniedException {
 
-    @Override
-    @Transactional
-    public ProdutoDTO alteraProduto(Produto produto) throws ResourceNotFoundException {
-        Produto produtoId = produtoRepository.findById(produto.getId()).orElse(null);
+        Produto produtoId = produtoRepository.findById(produto.getId())
+                .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado"));
+
+        // Produto produtoId = produtoRepository.findById(produto.getId()).orElse(null);
 
         if(produtoId.getAtivo() == true){
             
@@ -80,14 +75,13 @@ public class ProdutoService implements ProdutoInterface{
 
             produtoRepository.save(produtoId);
 
-            return new ProdutoDTO(produtoId.getNome(), produtoId.getDescricao(), produtoId.getValor(), produtoId.getQuantidade(), produtoId.getUsuarios());
+            return produtoId;
+            // return new ProdutoDTO(produtoId.getId(),produtoId.getNome(), produtoId.getDescricao(), produtoId.getValor(), produtoId.getQuantidade(), null);
         } else {
-            throw new DataIntegrityViolationException("Produto não ativo!");
+            throw new AccessDeniedException("Produto não ativo!");
         }
     }
 
-    @Override
-    @Transactional
     public Produto desativarProduto(Long id) {
         Produto produto = produtoRepository.findById(id).orElse(null);
         
@@ -97,7 +91,7 @@ public class ProdutoService implements ProdutoInterface{
             return produto;
         }
         else{
-            throw new DataIntegrityViolationException("Produto não cadastrado!");
+            throw new EntityNotFoundException("Produto não cadastrado!");
         }
     }
 

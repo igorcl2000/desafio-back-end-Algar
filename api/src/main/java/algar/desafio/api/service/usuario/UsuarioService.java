@@ -1,5 +1,6 @@
 package algar.desafio.api.service.usuario;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,17 +11,14 @@ import org.springframework.stereotype.Service;
 import algar.desafio.api.dto.UsuarioDTO;
 import algar.desafio.api.model.Usuario;
 import algar.desafio.api.repository.UsuarioRepository;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
 
 @Service
-public class UsuarioService implements UsuarioInterface{
+public class UsuarioService{
 
     @Autowired
     private UsuarioRepository usuarioRepository;
-    
 
-    @Override
-    @Transactional
     public Usuario criarUsuario(Usuario usuario){
         Usuario usuarioExiste = usuarioRepository.findByCpf(usuario.getCpf());
 
@@ -34,32 +32,28 @@ public class UsuarioService implements UsuarioInterface{
         }
     }
 
-    @Override
     public List<Usuario> usuarioLista() {
 
-        System.out.println("Buscando produto...");
+        System.out.println("Buscando usuario...");
         simulateLatency();
         return usuarioRepository.findAllByAtivoTrue();
     }
 
-    @Override
-    public Usuario getUsuario(Long id ) throws ResourceNotFoundException {
+    public Usuario getUsuario(Long id ) throws AccessDeniedException {
 
-        System.out.println("Buscando produto...");
+        System.out.println("Buscando usuario...");
         simulateLatency();
         
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
+        Usuario usuario = usuarioRepository.findById(id)
+				.orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado"));
 
-        if(usuario != null){
-            System.out.println("Produto entregue. ");
-            return usuario;
-        } else {
-            throw new ResourceNotFoundException("Usuário não cadastrado!");
-        }
+		if (usuario.getAtivo() == false) {
+			throw new AccessDeniedException("usuario inativo!");
+		}
+
+		return usuario;
     }
 
-    @Override
-    @Transactional
     public UsuarioDTO adicionaSaldo(Long id, double saldo) throws ResourceNotFoundException {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
 
@@ -74,9 +68,7 @@ public class UsuarioService implements UsuarioInterface{
         }
     }
 
-    @Override
-    @Transactional
-    public UsuarioDTO alterarUsuario(Usuario usuario) throws ResourceNotFoundException {
+    public UsuarioDTO alterarUsuario(Usuario usuario) throws AccessDeniedException {
         Usuario usuarioId = usuarioRepository.findById(usuario.getId()).orElse(null);
 
         if (usuarioId.getAtivo() == true) {
@@ -97,13 +89,11 @@ public class UsuarioService implements UsuarioInterface{
 
             return new UsuarioDTO(usuarioId.getNome(), usuarioId.getCpf(), usuarioId.getSaldo());
         } else {
-            throw new DataIntegrityViolationException("Usuario não ativo!");
+            throw new AccessDeniedException("Usuario não ativo!");
         }
         
     }
 
-    @Override
-    @Transactional
     public Usuario desativarUsuario(Long id) {
         Usuario usuario = usuarioRepository.findById(id).orElse(null);
         
@@ -113,7 +103,7 @@ public class UsuarioService implements UsuarioInterface{
             return usuario;
         }
         else{
-            throw new DataIntegrityViolationException("Produto não cadastrado!");
+            throw new EntityNotFoundException("Produto não cadastrado!");
         }
     }
     

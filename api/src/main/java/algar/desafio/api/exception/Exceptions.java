@@ -1,5 +1,7 @@
 package algar.desafio.api.exception;
 
+import java.nio.file.AccessDeniedException;
+
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -8,6 +10,7 @@ import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
 import algar.desafio.api.dto.ExceptionDTO;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
 
 @ControllerAdvice
@@ -49,7 +52,27 @@ public class Exceptions {
             HttpStatus.BAD_REQUEST.value()
         );
 
-        return new ResponseEntity<>(exceptionDTO, HttpStatus.CONFLICT);
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity<Object> handleException(EntityNotFoundException exception, HttpServletRequest request){
+        ExceptionDTO exceptionDTO = new ExceptionDTO(
+            exception.getMessage(),
+            HttpStatus.BAD_REQUEST.value()
+        );
+
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.NOT_FOUND);
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Object> handleException(AccessDeniedException exception, HttpServletRequest request){
+        ExceptionDTO exceptionDTO = new ExceptionDTO(
+            exception.getMessage(),
+            HttpStatus.BAD_REQUEST.value()
+        );
+
+        return new ResponseEntity<>(exceptionDTO, HttpStatus.UNAUTHORIZED);
     }
 
 }
