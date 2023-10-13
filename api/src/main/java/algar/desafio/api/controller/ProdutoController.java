@@ -35,7 +35,7 @@ public class ProdutoController {
     private EntityManager entity;
 
     @PostMapping(value = "/criar")
-    @CacheEvict(value = "usuario", allEntries = true)
+    @CacheEvict(value = "produto", allEntries = true)
     @Transactional
     public ResponseEntity<?> criarProduto(@RequestBody @Valid Produto produto){
         Produto produtoCriado = produtoInterface.criarProduto(produto);
@@ -72,6 +72,7 @@ public class ProdutoController {
     @Transactional
     public ResponseEntity<Produto> desativarUsuario(@PathVariable("id") Long id){
         produtoInterface.desativarProduto(id);
+        entity.flush();
         return ResponseEntity.ok().body(null);
     }
 }
