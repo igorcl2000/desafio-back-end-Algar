@@ -4,8 +4,10 @@ import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import algar.desafio.api.dto.UsuarioDTO;
@@ -19,19 +21,21 @@ public class UsuarioService{
     @Autowired
     private UsuarioRepository usuarioRepository;
 
-    public Usuario criarUsuario(Usuario usuario){
+    @CacheEvict(value = "usuario", allEntries = true)
+    public UsuarioDTO criarUsuario(Usuario usuario){
         Usuario usuarioExiste = usuarioRepository.findByCpf(usuario.getCpf());
 
         if(usuarioExiste == null){
             usuario.setAtivo(true);
             usuarioExiste = usuarioRepository.save(usuario);
-            return usuarioExiste;
+            return new UsuarioDTO(usuarioExiste.getId(),usuarioExiste.getNome(),usuarioExiste.getEmail(),usuarioExiste.getCpf(),usuarioExiste.getSaldo(),usuarioExiste.getProdutos());
         }
         else{
             throw new DataIntegrityViolationException("Usuário já existente!");
         }
     }
 
+    // @Cacheable(value = "usuario")
     public List<Usuario> usuarioLista() {
 
         System.out.println("Buscando usuario...");
@@ -39,6 +43,7 @@ public class UsuarioService{
         return usuarioRepository.findAllByAtivoTrue();
     }
 
+    @Cacheable(value = "usuario", key = "#id", condition = "#id > 1")
     public Usuario getUsuario(Long id ) throws AccessDeniedException {
 
         System.out.println("Buscando usuario...");
@@ -54,62 +59,68 @@ public class UsuarioService{
 		return usuario;
     }
 
-    public UsuarioDTO adicionaSaldo(Long id, double saldo) throws ResourceNotFoundException {
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
+    @CachePut(value = "usuario", key = "#id")
+    public Usuario adicionaSaldo(Long id, double saldo) throws AccessDeniedException {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado"));
 
-        if(usuario != null){
+        if(usuario.getAtivo() == true){
             usuario.setSaldo(usuario.getSaldo() + saldo);
             usuarioRepository.save(usuario);
 
-            return new UsuarioDTO(usuario.getNome(), usuario.getCpf(), usuario.getSaldo());
+            return usuario;
         }
         else{
-            throw new ResourceNotFoundException("Usuário não cadastrado!");
+            throw new AccessDeniedException("Usuario não ativo!");
         }
     }
 
-    public UsuarioDTO alterarUsuario(Usuario usuario) throws AccessDeniedException {
-        Usuario usuarioId = usuarioRepository.findById(usuario.getId()).orElse(null);
+    @CachePut(value = "usuario", key = "#id")
+    public Usuario alterarUsuario(Long id, UsuarioDTO usuarioDTO) throws AccessDeniedException {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado"));
 
-        if (usuarioId.getAtivo() == true) {
-            if (usuario.getNome() != null) {
-                usuarioId.setNome(usuario.getNome());
+        if (usuario.getAtivo() == true) {
+            if (usuarioDTO.getNome() != null) {
+                usuario.setNome(usuarioDTO.getNome());
             }
-            if (usuario.getEmail() != null) {
-                usuarioId.setEmail(usuario.getEmail());
+            if (usuarioDTO.getEmail() != null) {
+                usuario.setEmail(usuarioDTO.getEmail());
             }
-            if (usuario.getCpf() != null) {
-                usuarioId.setCpf(usuario.getCpf());
+            if (usuarioDTO.getCpf() != null) {
+                usuario.setCpf(usuarioDTO.getCpf());
             }
-            if (usuario.getSaldo() != 0) {
-                usuarioId.setSaldo(usuario.getSaldo());
+            if (usuarioDTO.getSaldo() != 0) {
+                usuario.setSaldo(usuarioDTO.getSaldo());
             }
 
-            usuarioRepository.save(usuarioId);
+            usuarioRepository.save(usuario);
 
-            return new UsuarioDTO(usuarioId.getNome(), usuarioId.getCpf(), usuarioId.getSaldo());
+            return usuario;
         } else {
             throw new AccessDeniedException("Usuario não ativo!");
         }
         
     }
 
-    public Usuario desativarUsuario(Long id) {
-        Usuario usuario = usuarioRepository.findById(id).orElse(null);
+    @CacheEvict(value = "usuario", key = "#id")
+    public Usuario desativarUsuario(Long id) throws AccessDeniedException {
+        Usuario usuario = usuarioRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Usuario não encontrado"));
         
-        if(usuario != null && usuario.getAtivo() == true){
+        if(usuario.getAtivo() == true){
             usuario.setAtivo(false);
             usuarioRepository.save(usuario);
             return usuario;
         }
         else{
-            throw new EntityNotFoundException("Produto não cadastrado!");
+            throw new AccessDeniedException("Usuario não ativo!");
         }
     }
     
     private void simulateLatency() {
 		try {
-			long time = 3000L;
+			long time = 1000L;
 			Thread.sleep(time);
 		} catch (InterruptedException e) {
 			throw new IllegalStateException(e);

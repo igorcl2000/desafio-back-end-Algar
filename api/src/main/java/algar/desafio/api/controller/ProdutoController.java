@@ -4,9 +4,6 @@ import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -18,6 +15,7 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import algar.desafio.api.dto.ProdutoDTO;
 import algar.desafio.api.model.Produto;
 import algar.desafio.api.service.produto.ProdutoService;
 import jakarta.persistence.EntityManager;
@@ -35,7 +33,6 @@ public class ProdutoController {
     private EntityManager entity;
 
     @PostMapping(value = "/criar")
-    @CacheEvict(value = "produto", allEntries = true)
     @Transactional
     public ResponseEntity<?> criarProduto(@RequestBody @Valid Produto produto){
         Produto produtoCriado = produtoInterface.criarProduto(produto);
@@ -44,31 +41,24 @@ public class ProdutoController {
     }
 
     @GetMapping(value = "/lista")
-    @Cacheable(value = "produto")
     public ResponseEntity<List<Produto>> ProdutoLista(){
         return ResponseEntity.ok(produtoInterface.produtoLista());
     }
 
     @GetMapping(value = "/{id}")
-    @Cacheable(value = "produto", condition = "#id > 1")
     public ResponseEntity<Produto> getProduto(@PathVariable Long id) throws AccessDeniedException{
         return ResponseEntity.ok(produtoInterface.getProduto(id));
     }
 
-    /* BUG */
     @PutMapping(value = "/alterar/{id}")
-    @CachePut(value = "produto", key = "#id") // Atualiza o cache com o produto alterado
     @Transactional
-    public ResponseEntity<?> alterarProduto(@PathVariable Long id) throws AccessDeniedException{
-
-        Produto produto = produtoInterface.getProduto(id);
-		produtoInterface.alteraProduto(produto);
+    public ResponseEntity<Produto> alterarProduto(@PathVariable Long id, @RequestBody ProdutoDTO produtoDTO) throws AccessDeniedException{
+		Produto produto = produtoInterface.alteraProduto(id, produtoDTO);
 		entity.flush();
         return ResponseEntity.ok(produto);
     }
 
     @DeleteMapping(value = "/desativar/{id}")
-    @CachePut(value = "produto", key = "#id")
     @Transactional
     public ResponseEntity<Produto> desativarUsuario(@PathVariable("id") Long id){
         produtoInterface.desativarProduto(id);

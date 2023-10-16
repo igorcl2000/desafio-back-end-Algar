@@ -3,11 +3,11 @@ package algar.desafio.api.service.compra;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CachePut;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import algar.desafio.api.dto.CompraDTO;
-import algar.desafio.api.dto.UsuarioDTO;
 import algar.desafio.api.model.Produto;
 import algar.desafio.api.model.Usuario;
 import algar.desafio.api.repository.ProdutoRepository;
@@ -23,10 +23,11 @@ public class CompraService {
     @Autowired
     private ProdutoRepository produtoRepository;
 
-    public UsuarioDTO compraProduto(CompraDTO compraDTO) throws Exception {
+    @CachePut(value = "usuario", key = "#compraDTO.getUsuarioId")
+    public Usuario compraProduto(CompraDTO compraDTO) throws Exception {
         
-        Produto produto = produtoRepository.findById(compraDTO.produtoId()).orElse(null);
-        Usuario usuario = usuarioRepository.findById(compraDTO.usuarioId()).orElse(null);
+        Produto produto = produtoRepository.findById(compraDTO.getProdutoId()).orElse(null);
+        Usuario usuario = usuarioRepository.findById(compraDTO.getUsuarioId()).orElse(null);
 
         if(usuario.getAtivo() == false || usuario == null ){
             throw new ResourceNotFoundException("Usuário não cadastrado!");
@@ -54,12 +55,6 @@ public class CompraService {
         usuarioRepository.save(usuario);
         produtoRepository.save(produto);
 
-        return new UsuarioDTO(
-            usuario.getId(), 
-            usuario.getNome(),
-            usuario.getEmail(),
-            usuario.getCpf(),
-            usuario.getSaldo(),
-            usuario.getProdutos());
+        return usuario;
     }
 }
