@@ -10,24 +10,27 @@ public class ProdutoDTO {
     private String nome;
     private String descricao;
     private double valor;
-    private int quantiade;
+    private int quantidade;
     private List<Usuario> usuarios;
 
-    public ProdutoDTO(Long id, String nome, String descricao, double valor, int quantiade, List<Usuario> usuarios) {
+    public ProdutoDTO() {
+    }
+
+    public ProdutoDTO(Long id, String nome, String descricao, double valor, int quantidade) {
         this.id = id;
         this.nome = nome;
         this.descricao = descricao;
         this.valor = valor;
-        this.quantiade = quantiade;
-        this.usuarios = usuarios;
+        this.quantidade = quantidade;
     }
 
-    public ProdutoDTO(String nome,List<Usuario> usuarios) {
+    public ProdutoDTO(String nome, String descricao, double valor, int quantidade) {
         this.nome = nome;
-        this.usuarios = usuarios;
+        this.descricao = descricao;
+        this.valor = valor;
+        this.quantidade = quantidade;
     }
 
-    
     public Long getId() {
         return id;
     }
@@ -52,11 +55,11 @@ public class ProdutoDTO {
     public void setValor(double valor) {
         this.valor = valor;
     }
-    public int getQuantiade() {
-        return this.quantiade;
+    public int getQuantidade() {
+        return this.quantidade;
     }
-    public void setQuantiade(int quantiade) {
-        this.quantiade = quantiade;
+    public void setQuantiade(int quantidade) {
+        this.quantidade = quantidade;
     }
     public List<Usuario> getUsuarios() {
         return usuarios;
@@ -72,10 +75,8 @@ public class ProdutoDTO {
             " nome='" + getNome() + "'" +
             ", descricao='" + getDescricao() + "'" +
             ", valor='" + getValor() + "'" +
-            ", quantidade='" + getQuantiade() + "'" +
+            ", quantidade='" + getQuantidade() + "'" +
             ", usuarios='" + getUsuarios() + "'" +
             "}";
     }
-
-    
 }

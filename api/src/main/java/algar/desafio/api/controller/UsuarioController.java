@@ -4,9 +4,6 @@ import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.CachePut;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -37,50 +34,44 @@ public class UsuarioController {
     private EntityManager entity;
 
     @PostMapping(value = "/criar")
-    @CacheEvict(value = "usuario", allEntries = true)
     @Transactional
-    public ResponseEntity<Object> criarClient(@RequestBody @Valid Usuario usuario){
-        Usuario usuarioCriado = usuarioInterface.criarUsuario(usuario);
+    public ResponseEntity<?> criarClient(@RequestBody @Valid Usuario usuario){
+        UsuarioDTO usuarioCriado = usuarioInterface.criarUsuario(usuario);
         entity.flush();
         return ResponseEntity.status(HttpStatus.CREATED).body(usuarioCriado);
     }
 
     @PutMapping(value = "/adicionaSaldo")
-    @CachePut(value = "usuario")
-    public ResponseEntity<UsuarioDTO> adicionaSaldo(@RequestParam("id") Long id, @RequestParam("saldo") double saldo){
-        UsuarioDTO usuarioDTO = usuarioInterface.adicionaSaldo(id, saldo);
-        return ResponseEntity.ok().body(usuarioDTO);
+    @Transactional
+    public ResponseEntity<Usuario> adicionaSaldo(@RequestParam("id") Long id, @RequestParam("saldo") double saldo) throws AccessDeniedException{
+        Usuario usuario = usuarioInterface.adicionaSaldo(id, saldo);
+        entity.flush();
+        return ResponseEntity.ok().body(usuario);
     }
 
     @GetMapping(value = "/lista")
-    @Cacheable(value = "usuario")
     public ResponseEntity<List<Usuario>> UsuarioLista(){
         return ResponseEntity.ok().body(usuarioInterface.usuarioLista());
     }
 
     @GetMapping(value = "/{id}")
-    @Cacheable(value = "usuario", condition = "#id > 1")
     public ResponseEntity<Usuario> getUsuario(@PathVariable Long id) throws AccessDeniedException{
-        //Usuario usuario = usuarioInterface.getUsuario(id);
         return ResponseEntity.ok().body(usuarioInterface.getUsuario(id));
     }
 
     @PutMapping(value = "/alterar/{id}")
-    @CachePut(value = "usuario", key = "#id")
     @Transactional
-    public ResponseEntity<UsuarioDTO> alterarProduto(@PathVariable Long id)throws AccessDeniedException {
-
-        Usuario usuarioId = usuarioInterface.getUsuario(id);
-        UsuarioDTO usuarioDTO = usuarioInterface.alterarUsuario(usuarioId);
+    public ResponseEntity<Usuario> alterarProduto(@PathVariable Long id, @RequestBody UsuarioDTO usuarioDTO)throws AccessDeniedException {
+        Usuario usuario = usuarioInterface.alterarUsuario(id ,usuarioDTO);
         entity.flush();
-        return ResponseEntity.ok().body(usuarioDTO);
+        return ResponseEntity.ok().body(usuario);
     }
 
     @DeleteMapping(value = "/desativar/{id}")
-    @CachePut(value = "usuario", key = "#id")
     @Transactional
-    public ResponseEntity<Usuario> desativarUsuario(@PathVariable("id") Long id){
+    public ResponseEntity<Usuario> desativarUsuario(@PathVariable("id") Long id) throws AccessDeniedException {
         usuarioInterface.desativarUsuario(id);
+        entity.flush();
         return ResponseEntity.ok().body(null);
     }
 

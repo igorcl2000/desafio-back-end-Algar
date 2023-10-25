@@ -1,9 +1,13 @@
 package algar.desafio.api.service.produto;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.CachePut;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 
+import algar.desafio.api.dto.ProdutoDTO;
 import algar.desafio.api.model.Produto;
 import algar.desafio.api.repository.ProdutoRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -17,6 +21,7 @@ public class ProdutoService {
     @Autowired
     private ProdutoRepository produtoRepository;
 
+    @CacheEvict(value = "produto", allEntries = true)
     public Produto criarProduto(Produto produto) {
         Produto produtoNome = produtoRepository.findByNome(produto.getNome());
         
@@ -29,6 +34,8 @@ public class ProdutoService {
             throw new DataIntegrityViolationException("Produto já cadastrado!");
         }
     }
+
+    // @Cacheable(value = "produtoLista")
     public List<Produto> produtoLista() {
 
         System.out.println("Buscando produto...");
@@ -36,10 +43,11 @@ public class ProdutoService {
         return produtoRepository.findAllByAtivoTrue();
     }
 
+    @Cacheable(value = "produto", key = "#id", condition = "#id > 1")
     public Produto getProduto(Long id) throws AccessDeniedException {
 
         System.out.println("Buscando produto...");
-		// simulateLatency();
+		simulateLatency();
 
 		Produto produto = produtoRepository.findById(id)
 				.orElseThrow(() -> new EntityNotFoundException("Produto não encontrado"));
@@ -51,37 +59,36 @@ public class ProdutoService {
 		return produto;
     }
     
-    public Produto alteraProduto(Produto produto)  throws AccessDeniedException {
+    @CachePut(value = "produto", key = "#id") // Atualiza o cache com o produto alterado
+    public Produto alteraProduto(Long id, ProdutoDTO produtoDTO)  throws AccessDeniedException {
 
-        Produto produtoId = produtoRepository.findById(produto.getId())
+        Produto produto = produtoRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("Produto não encontrado"));
 
-        // Produto produtoId = produtoRepository.findById(produto.getId()).orElse(null);
-
-        if(produtoId.getAtivo() == true){
+        if(produto.getAtivo() == true){
             
-            if (produto.getNome() != null) {
-                produtoId.setNome(produto.getNome());
+            if (produtoDTO.getNome() != null) {
+                produto.setNome(produtoDTO.getNome());
             }
-            if (produto.getDescricao() != null) {
-                produtoId.setDescricao(produto.getDescricao());
+            if (produtoDTO.getDescricao() != null) {
+                produto.setDescricao(produtoDTO.getDescricao());
             }
-            if (produto.getValor() != 0.0) {
-                produtoId.setValor(produto.getValor());
+            if (produtoDTO.getValor() != 0.0) {
+                produto.setValor(produtoDTO.getValor());
             }
-            if (produto.getQuantidade() != 0) {
-                produtoId.setQuantidade(produto.getQuantidade());
+            if (produtoDTO.getQuantidade() != 0) {
+                produto.setQuantidade(produtoDTO.getQuantidade());
             }
 
-            produtoRepository.save(produtoId);
+            produtoRepository.save(produto);
 
-            return produtoId;
-            // return new ProdutoDTO(produtoId.getId(),produtoId.getNome(), produtoId.getDescricao(), produtoId.getValor(), produtoId.getQuantidade(), null);
+            return produto;
         } else {
             throw new AccessDeniedException("Produto não ativo!");
         }
     }
 
+    @CacheEvict(value = "produto", key = "#id")
     public Produto desativarProduto(Long id) {
         Produto produto = produtoRepository.findById(id).orElse(null);
         
@@ -97,7 +104,7 @@ public class ProdutoService {
 
     private void simulateLatency() {
 		try {
-			long time = 3000L;
+			long time = 1000L;
 			Thread.sleep(time);
 		} catch (InterruptedException e) {
 			throw new IllegalStateException(e);

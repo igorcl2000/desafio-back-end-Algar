@@ -34,57 +34,36 @@ public class UsuarioDTO {
     public Long getId() {
         return this.id;
     }
-
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public String getNome() {
         return this.nome;
     }
-
-
     public void setNome(String nome) {
         this.nome = nome;
     }
-
-
     public String getEmail() {
         return this.email;
     }
-
-
     public void setEmail(String email) {
         this.email = email;
     }
-
-
     public String getCpf() {
         return this.cpf;
     }
-
-
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
-
-
     public double getSaldo() {
         return this.saldo;
     }
-
-
     public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
-
-
     public List<Produto> getProdutos() {
         return this.produtos;
     }
-
-
     public void setProdutos(List<Produto> produtos) {
         this.produtos = produtos;
     }
@@ -99,9 +78,5 @@ public class UsuarioDTO {
             ", produtos='" + getProdutos() + "'" +
             "}";
     }
-
-
-    
-    
 }
 

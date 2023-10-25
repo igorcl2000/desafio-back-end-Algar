@@ -45,61 +45,47 @@ public class Usuario {
 
     public Usuario() {
     }
-
     public Long getId() {
         return id;
     }
-
     public void setId(Long id) {
         this.id = id;
     }
-
     public String getNome() {
         return nome;
     }
-
     public void setNome(String nome) {
         this.nome = nome;
     }
-
     public String getEmail() {
         return email;
     }
-
     public void setEmail(String email) {
         this.email = email;
     }
-
     public String getCpf() {
         return cpf;
     }
-
     public void setCpf(String cpf) {
         this.cpf = cpf;
     }
-
     public double getSaldo() {
         return saldo;
     }
-
     public void setSaldo(double saldo) {
         this.saldo = saldo;
     }
-
     public Boolean getAtivo() {
         return ativo;
     }
-
     public void setAtivo(Boolean ativo) {
         this.ativo = ativo;
     }
-
     public List<Produto> getProdutos() {
         return produtos;
     }
-
-    public void setProdutos(List<Produto> long1) {
-        this.produtos = long1;
+    public void setProdutos(List<Produto> produtoId) {
+        this.produtos = produtoId;
     }
 
     @Override
